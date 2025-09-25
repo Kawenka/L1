@@ -104,12 +104,14 @@ if __name__ == '__main__':
     tree_size = int(input("Taille de l'arbre: "))
 
     setup(600, 600)
+    speed(1000)
     rue(nombre_maisons)
+    color("yellow")
     ciel_etoile(nombre_etoiles)
     up()
     goto(0, -290)
     down()
     setheading(90)
+    color("green")
     draw_tree(tree_size)
     exitonclick()
-
