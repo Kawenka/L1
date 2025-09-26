@@ -1,4 +1,3 @@
-
 from turtle import *
 from random import randint
 
@@ -32,22 +31,38 @@ def maison(cote):
     
 
 def rue(nb_maisons):
-    """ Doit dessiner une rue de maisons aléatoires, espacées aléatoirement dans la fenêtre
+    """ Dessine une rue de maisons aléatoires, espacées aléatoirement dans la fenêtre
 
     :param nb_maisons: le nombre de maisons à dessiner à la suite
     """
-    # Compléter la fonction ici
     up()
-    size = 600 / (nb_maisons + 2)
+    # Définir les limites horizontales de l'écran
+    espace_total = 550  # De -250 à environ +300
+    
+    # Calculer l'espace entre chaque maison
+    if nb_maisons > 1:
+        espace_entre_maisons = espace_total / (nb_maisons - 1)
+    else:
+        espace_entre_maisons = 0
+    
+    # Calculer une taille maximale pour les maisons
+    taille_max = min(espace_entre_maisons * 0.7, 600 / (nb_maisons + 2))
+    size = taille_max
+    
+    # Positionnement initial
     right(90)
-    goto(-250, -100)
+    start_x = -250
+    goto(start_x, -100)
     y = ycor()
-    x = xcor()
-    for i in range (nb_maisons):
+    
+    for i in range(nb_maisons):
+        # Positionner à l'emplacement actuel
+        x = start_x + (i * espace_entre_maisons)
+        goto(x, y + (randint(-20, 20)))
+        
+        # Dessiner la maison
         maison(size)
         left(30)
-        x += size + 2
-        goto(x ,y + (randint(-20, 20)))
         
 
 def etoile(diametre, rotation):     # étoile à 5 branches
@@ -82,10 +97,20 @@ def ciel_etoile(nb_etoiles):
 def draw_tree(size):
     down()
     if size < 10:
+        pensize(5)
+        color("darkgreen")
         forward(size)
         backward(size)
         return
+    
+    # Tronc (branches principales)
+    pensize(size/15)  # Épaisseur proportionnelle à la taille
+    color("#8B4513")
     forward(size / 3)
+    
+    # Réduire l'épaisseur pour les branches secondaires
+    pensize(size/20)
+    
     left(30)
     draw_tree(size * 2 / 3)
     right(60)
@@ -94,17 +119,55 @@ def draw_tree(size):
     backward(size / 3)
     up()
 
+def dessiner_paysage(style="arrondi"):
+    """
+    Dessine le paysage avec un fond bleu nuit et un sol vert
+    
+    :param style: "droit" pour un sol plat ou "arrondi" pour un sol légèrement courbé
+    """
+    # Fond bleu nuit
+    bgcolor("#000033")  # Bleu très foncé
+    
+    # Dessiner le sol en vert foncé
+    up()
+    pensize(1)
+    goto(-300, -200)  # Position de départ à gauche de l'écran
+    down()
+    
+    # Colline en vert foncé
+    color("darkgreen")
+    fillcolor("#003300")  # Vert très foncé
+    begin_fill()
+    
+    if style == "droit":
+        # Sol droit
+        goto(300, -200)  # Ligne droite jusqu'à l'autre côté
+    else:
+        # Sol légèrement arrondi (courbe simple)
+        for x in range(-300, 310, 10):
+            # Créer une courbe douce avec une fonction parabolique simple
+            y = -200 + 30 * ((x / 300) ** 2 - 1)  # Forme de U inversé
+            goto(x, y)
+    
+    # Compléter la forme pour le remplissage
+    goto(300, -300)  # Coin bas droit
+    goto(-300, -300)  # Coin bas gauche
+    goto(-300, -200)  # Retour au point de départ
+    
+    end_fill()
+
 ############################################################################
 ##### Zone du programme qui dessine votre nuit étoilée #######
 ############################################################################
 
 if __name__ == '__main__':
+
     nombre_maisons = int(input("Combien de maisons voulez-vous ?  (<15)  "))          	# <- ne pas modifier !!!
     nombre_etoiles = int(input("Combien d'étoiles voulez-vous ?  "))					# <- ne pas modifier !!!
     tree_size = int(input("Taille de l'arbre: "))
 
     setup(600, 600)
-    speed(1000)
+    speed(0)
     rue(nombre_maisons)
     color("yellow")
     ciel_etoile(nombre_etoiles)
@@ -114,4 +177,5 @@ if __name__ == '__main__':
     setheading(90)
     color("green")
     draw_tree(tree_size)
+    dessiner_paysage()
     exitonclick()
